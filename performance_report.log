@@ -1,0 +1,346 @@
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 22 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+Data Streamer Metrics:
+  Records Streamed: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 34 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+Data Streamer Metrics:
+  Records Streamed: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 162 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 81 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 183 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 199 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 319 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 473 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 584 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+Cluster Metrics:
+  CPU Usage: 0.0%
+  Memory Usage: 137 MB
+  Number of Nodes: 1
+Cache Metrics:
+  Cache Size: 0
+  Hit Ratio: 0.0%
+  Miss Ratio: 0.0%
+  Put Operations: 0
+  Get Operations: 0
+  Remove Operations: 0
+  Evictions: 0
+----------------------------------------
+===== Ignite Metrics Report =====
+Timestamp: 1741715866745
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 172 MB
+Non-Heap Memory Used: 60 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 0
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741716075810
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 33 MB
+Non-Heap Memory Used: 31 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 0
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741716292791
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 34 MB
+Non-Heap Memory Used: 31 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 0
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741716498800
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 154 MB
+Non-Heap Memory Used: 60 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 995142
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741716621405
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 34 MB
+Non-Heap Memory Used: 31 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 995157
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741716956787
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 156 MB
+Non-Heap Memory Used: 65 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 995170
+Cache Reads: 0
+Cache Writes: 0
+Cache Updates: 0
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 0
+Hit Ratio: 0.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741717193381
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 242 MB
+Non-Heap Memory Used: 62 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: dummy
+Cache Size: 95123
+Cache Reads: 50001
+Cache Writes: 110000
+Cache Updates: 115000
+Cache Evictions: 143869
+Cache Misses: 0
+Cache Hits: 50001
+Hit Ratio: 100.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741717496522
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 71 MB
+Non-Heap Memory Used: 62 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: workload
+Cache Size: 9005
+Cache Reads: 50000
+Cache Writes: 10000
+Cache Updates: 15000
+Cache Evictions: 0
+Cache Misses: 50000
+Cache Hits: 0
+Hit Ratio: 0.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1741717765555
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 185 MB
+Non-Heap Memory Used: 62 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: workload
+Cache Size: 95104
+Cache Reads: 50001
+Cache Writes: 110000
+Cache Updates: 115000
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 50001
+Hit Ratio: 100.0%
+
+=====================================
+===== Ignite Metrics Report =====
+Timestamp: 1742232663608
+
+=== Cluster Metrics ===
+CPU Load: 0.0%
+Heap Memory Used: 151 MB
+Non-Heap Memory Used: 63 MB
+Total Nodes in Cluster: 1
+Current Topology Version: 1
+
+=== Cache Metrics ===
+Cache Name: workload
+Cache Size: 95131
+Cache Reads: 50001
+Cache Writes: 110000
+Cache Updates: 115000
+Cache Evictions: 0
+Cache Misses: 0
+Cache Hits: 50001
+Hit Ratio: 100.0%
+
+=====================================
