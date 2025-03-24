@@ -25,9 +25,9 @@ A Spring Boot application demonstrating read-through/write-through caching betwe
    - Install Maven and add `MAVEN_HOME/bin` to `PATH`
 
 3. **Clone Repository**:  
-   ```powershell
-   git clone https://github.com/your-repo/ignite-mongo-demo.git
-   cd ignite-mongo-demo
+   ```IntelliJ IDEA
+   git clone https://github.com/e0276472/ignite-data-stream.git
+
    
 ⚙️ Configuration
 Main Configuration (src/main/resources/application.properties):
