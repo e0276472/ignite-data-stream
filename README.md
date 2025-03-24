@@ -25,15 +25,13 @@ A Spring Boot application demonstrating read-through/write-through caching betwe
    - Install Maven and add `MAVEN_HOME/bin` to `PATH`
 
 3. **Clone Repository**:  
-   ```IntelliJ IDEA
-   git clone https://github.com/e0276472/ignite-data-stream.git
-
+   `git clone https://github.com/e0276472/ignite-data-stream.git`
    
 ⚙️ Configuration
 Edit Project Configurations under Build and run
 Modify options Add VM options Copy and paste below into the field
 
---add-opens=java.base/jdk.internal.access=ALL-UNNAMED
+```--add-opens=java.base/jdk.internal.access=ALL-UNNAMED
 --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED
 --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
@@ -56,7 +54,7 @@ Modify options Add VM options Copy and paste below into the field
 --add-opens=java.base/java.time=ALL-UNNAMED
 --add-opens=java.base/java.text=ALL-UNNAMED
 --add-opens=java.management/sun.management=ALL-UNNAMED
---add-opens java.desktop/java.awt.font=ALL-UNNAMED
+--add-opens java.desktop/java.awt.font=ALL-UNNAMED```
 
 Main Configuration (src/main/resources/application.properties):
 spring.data.mongodb.uri=mongodb://localhost:27017/flightDB
