@@ -276,3 +276,25 @@ Read Time (50k ops): 15337 ms
 Update Time (10k ops): 3430 ms
 Delete Time (5k ops): 1290 ms
 ===================================
+
+===== Ignite Metrics =====
+Timestamp: 1742839716813
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 154 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2814 ms
+Read Time (50k ops): 15292 ms
+Update Time (10k ops): 3551 ms
+Delete Time (5k ops): 1310 ms
+===================================

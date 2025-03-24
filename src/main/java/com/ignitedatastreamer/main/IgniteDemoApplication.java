@@ -21,6 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.ignitedatastreamer.main.metrics.DirectMetrics;
 @SpringBootApplication
 @EnableMongoRepositories(basePackageClasses = IgniteDemoApplication.class)
+
 public class IgniteDemoApplication {
 
 	public static void main(String[] args) {
@@ -32,20 +33,25 @@ public class IgniteDemoApplication {
 											   MongoTemplate mongoTemplate,
 											   FlightPlanRepository flightPlanRepository) {
 		return args -> {
-			// Ignite Test
+			// Clear previous data
 			clearCache(ignite, "flightPlans");
 			clearMongoCollection(mongoTemplate);
-			loadFlightPlans(ignite);
-			IgniteCache<String, FlightPlan> flightPlanCache = ignite.cache("flightPlans");
-			simulateFlightOperations(flightPlanCache);
-			logMetrics(ignite, "flight_performance.log", flightPlanCache, "Ignite Metrics");
 
-			// Direct MongoDB Test
+			// Initialize metrics container
+			DirectMetrics metrics = new DirectMetrics();
+
+			// Test 1: Ignite with write-through
+			loadFlightPlans(ignite);
+			IgniteCache<String, FlightPlan> cache = ignite.cache("flightPlans");
+			simulateFlightOperations(cache);
+
+			// Test 2: Direct MongoDB
 			clearMongoCollection(mongoTemplate);
-			DirectMetrics directMetrics = new DirectMetrics();
-			loadFlightPlansDirect(mongoTemplate, directMetrics);
-			simulateDirectMongoOperations(flightPlanRepository, directMetrics);
-			logDirectMetrics(directMetrics, "flight_performance.log");
+			loadFlightPlansDirect(mongoTemplate, metrics);
+			simulateDirectMongoOperations(flightPlanRepository, metrics);
+
+			// Unified logging
+			logMetrics(ignite, "performance.log", cache, metrics);
 		};
 	}
 
@@ -148,30 +154,32 @@ public class IgniteDemoApplication {
 		System.out.println("✅ Flight operations for Ignite Cache simulation complete");
 	}
 
-	private void logMetrics(Ignite ignite, String filename, IgniteCache<String, FlightPlan> cache, String header) {
+	private void logMetrics(Ignite ignite, String filename,
+							IgniteCache<String, FlightPlan> cache,
+							DirectMetrics directMetrics) {
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(2000); // Allow final metric updates
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
 
-		CacheMetrics metrics = cache.metrics();
 		try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
-			writer.println("\n===== " + header + " =====");
+			// Ignite Metrics
+			CacheMetrics igniteMetrics = cache.metrics();
+			writer.println("\n===== Ignite Metrics =====");
 			writer.println("Timestamp: " + System.currentTimeMillis());
-
-			writer.println("\n=== Cluster Metrics ===");
-			ClusterMetrics clusterMetrics = ignite.cluster().metrics();
-			writer.println("CPU Load: " + String.format("%.2f%%", clusterMetrics.getCurrentCpuLoad() * 100));
-			writer.println("Heap Used: " + (clusterMetrics.getHeapMemoryUsed() / (1024 * 1024)) + " MB");
-
-			writer.println("\n=== Cache Metrics ===");
 			writer.println("Entries: " + cache.size());
-			writer.println("Reads: " + metrics.getCacheGets());
-			writer.println("Writes: " + metrics.getCachePuts());
-			writer.println("Hit Ratio: " + String.format("%.2f%%", metrics.getCacheHitPercentage()));
+			writer.println("Reads: " + igniteMetrics.getCacheGets());
+			writer.println("Writes: " + igniteMetrics.getCachePuts());
+			writer.println("Hit Ratio: " + String.format("%.2f%%", igniteMetrics.getCacheHitPercentage()));
 
-			writer.println("\n=====================================");
+			// Direct MongoDB Metrics
+			writer.println("\n===== Direct MongoDB Metrics =====");
+			writer.println("Data Load Time: " + directMetrics.getLoadTime() + " ms");
+			writer.println("Read Time (50k ops): " + directMetrics.getReadTime() + " ms");
+			writer.println("Update Time (10k ops): " + directMetrics.getUpdateTime() + " ms");
+			writer.println("Delete Time (5k ops): " + directMetrics.getDeleteTime() + " ms");
+
 		} catch (IOException e) {
 			System.err.println("Error writing metrics: " + e.getMessage());
 		}

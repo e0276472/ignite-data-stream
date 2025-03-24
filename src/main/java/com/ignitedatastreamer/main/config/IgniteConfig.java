@@ -19,13 +19,11 @@ public class IgniteConfig {
 
         CacheConfiguration<String, FlightPlan> flightCfg = new CacheConfiguration<>();
         flightCfg.setName("flightPlans");
-        flightCfg.setCacheMode(CacheMode.PARTITIONED);
+        flightCfg.setCacheMode(CacheMode.PARTITIONED); // ✅ Works universally
         flightCfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-        flightCfg.setStatisticsEnabled(true); // ✅ Critical for metrics
-
-        cfg.setMetricsUpdateFrequency(1000); // ✅ Frequent updates
+        flightCfg.setStatisticsEnabled(true); // Required for metrics
+        cfg.setMetricsUpdateFrequency(1000); // Update metrics every 1 second
         cfg.setCacheConfiguration(flightCfg);
-
         return Ignition.start(cfg);
     }
 }
