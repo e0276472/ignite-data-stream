@@ -1,6 +1,6 @@
 package com.ignitedatastreamer.main.repository;
 
-import com.ignitedatastreamer.main.IgniteDemoApplication.FlightPlan;
+import com.ignitedatastreamer.main.model.FlightPlan;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

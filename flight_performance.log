@@ -166,3 +166,113 @@ Writes: 110002
 Hit Ratio: 100.00%
 
 =====================================
+
+===== Ignite Metrics =====
+Timestamp: 1742838449949
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 173 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 0
+Writes: 0
+Hit Ratio: 0.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2791 ms
+Read Time (50k ops): 15338 ms
+Update Time (10k ops): 3313 ms
+Delete Time (5k ops): 1305 ms
+===================================
+
+===== Ignite Metrics =====
+Timestamp: 1742838623982
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 178 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 0
+Writes: 0
+Hit Ratio: 0.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2778 ms
+Read Time (50k ops): 15222 ms
+Update Time (10k ops): 3142 ms
+Delete Time (5k ops): 1290 ms
+===================================
+
+===== Ignite Metrics =====
+Timestamp: 1742838913533
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 168 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2827 ms
+Read Time (50k ops): 15357 ms
+Update Time (10k ops): 3351 ms
+Delete Time (5k ops): 1420 ms
+===================================
+
+===== Ignite Metrics =====
+Timestamp: 1742839261294
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 177 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2851 ms
+Read Time (50k ops): 16371 ms
+Update Time (10k ops): 3478 ms
+Delete Time (5k ops): 1478 ms
+===================================
+
+===== Ignite Metrics =====
+Timestamp: 1742839425584
+
+=== Cluster Metrics ===
+CPU Load: 0.00%
+Heap Used: 171 MB
+
+=== Cache Metrics ===
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+=====================================
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2748 ms
+Read Time (50k ops): 15337 ms
+Update Time (10k ops): 3430 ms
+Delete Time (5k ops): 1290 ms
+===================================

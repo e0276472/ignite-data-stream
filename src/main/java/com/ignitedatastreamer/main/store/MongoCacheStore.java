@@ -1,6 +1,6 @@
 package com.ignitedatastreamer.main.store;
 
-import com.ignitedatastreamer.main.IgniteDemoApplication.FlightPlan;
+import com.ignitedatastreamer.main.model.FlightPlan;
 import com.ignitedatastreamer.main.repository.FlightPlanRepository;
 import com.ignitedatastreamer.main.util.ApplicationContextHolder;
 import org.apache.ignite.cache.store.CacheStoreAdapter;
@@ -9,7 +9,6 @@ import javax.cache.integration.CacheLoaderException;
 import javax.cache.integration.CacheWriterException;
 
 public class MongoCacheStore extends CacheStoreAdapter<String, FlightPlan> {
-    // Retrieve repository from Spring context
     private FlightPlanRepository getRepository() {
         return ApplicationContextHolder.getApplicationContext().getBean(FlightPlanRepository.class);
     }
