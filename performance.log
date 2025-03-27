@@ -1,0 +1,82 @@
+
+===== Ignite Metrics =====
+Timestamp: 1742840115685
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2786 ms
+Read Time (50k ops): 16160 ms
+Update Time (10k ops): 3209 ms
+Delete Time (5k ops): 1306 ms
+
+===== Ignite Metrics =====
+Timestamp: 1742840892469
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2868 ms
+Read Time (50k ops): 17034 ms
+Update Time (10k ops): 3434 ms
+Delete Time (5k ops): 1319 ms
+
+===== Ignite Metrics =====
+Timestamp: 1742841568129
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2806 ms
+Read Time (50k ops): 16585 ms
+Update Time (10k ops): 3499 ms
+Delete Time (5k ops): 1305 ms
+
+===== Ignite Metrics =====
+Timestamp: 1742842393266
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2752 ms
+Read Time (50k ops): 15676 ms
+Update Time (10k ops): 3373 ms
+Delete Time (5k ops): 1292 ms
+
+===== Ignite Metrics =====
+Timestamp: 1742843129306
+Entries: 95002
+Reads: 50000
+Writes: 110002
+Hit Ratio: 100.00%
+
+===== Direct MongoDB Metrics =====
+Data Load Time: 2822 ms
+Read Time (50k ops): 15379 ms
+Update Time (10k ops): 3210 ms
+Delete Time (5k ops): 1303 ms
+
+===== Performance Report =====
+Generated at: Fri Mar 28 01:33:41 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 735 ms
+Read Time (50k ops): 549 ms
+Update Time (10k ops): 311 ms
+Delete Time (5k ops): 123 ms
+
+=== MongoDB Performance ===
+Data Load Time: 3006 ms
+Read Time (50k ops): 17282 ms
+Update Time (10k ops): 3517 ms
+Delete Time (5k ops): 1509 ms
+
+--------------------------------------------------

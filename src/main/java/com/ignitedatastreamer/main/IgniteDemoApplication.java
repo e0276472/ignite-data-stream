@@ -1,10 +1,9 @@
 package com.ignitedatastreamer.main;
 
+import com.ignitedatastreamer.main.metrics.PerformanceMetrics;
 import com.ignitedatastreamer.main.model.FlightPlan;
 import com.ignitedatastreamer.main.repository.FlightPlanRepository;
 import org.apache.ignite.*;
-import org.apache.ignite.cache.CacheMetrics;
-import org.apache.ignite.cluster.ClusterMetrics;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,10 +17,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import com.ignitedatastreamer.main.metrics.DirectMetrics;
+
 @SpringBootApplication
 @EnableMongoRepositories(basePackageClasses = IgniteDemoApplication.class)
-
 public class IgniteDemoApplication {
 
 	public static void main(String[] args) {
@@ -33,35 +31,39 @@ public class IgniteDemoApplication {
 											   MongoTemplate mongoTemplate,
 											   FlightPlanRepository flightPlanRepository) {
 		return args -> {
-			// Clear previous data
-			clearCache(ignite, "flightPlans");
-			clearMongoCollection(mongoTemplate);
+			PerformanceMetrics metrics = new PerformanceMetrics();
 
-			// Initialize metrics container
-			DirectMetrics metrics = new DirectMetrics();
+			// Test Ignite with write-through
+			testIgniteOperations(ignite, metrics);
 
-			// Test 1: Ignite with write-through
-			loadFlightPlans(ignite);
-			IgniteCache<String, FlightPlan> cache = ignite.cache("flightPlans");
-			simulateFlightOperations(cache);
+			// Test Direct MongoDB
+			testMongoDBOperations(mongoTemplate, flightPlanRepository, metrics);
 
-			// Test 2: Direct MongoDB
-			clearMongoCollection(mongoTemplate);
-			loadFlightPlansDirect(mongoTemplate, metrics);
-			simulateDirectMongoOperations(flightPlanRepository, metrics);
-
-			// Unified logging
-			logMetrics(ignite, "performance.log", cache, metrics);
+			// Log results
+			logMetrics(metrics, "performance.log");
 		};
+	}
+
+	private void testIgniteOperations(Ignite ignite, PerformanceMetrics metrics) {
+		clearCache(ignite, "flightPlans");
+		loadFlightPlans(ignite, metrics);
+		IgniteCache<String, FlightPlan> cache = ignite.cache("flightPlans");
+		simulateFlightOperations(cache, metrics);
+	}
+
+	private void testMongoDBOperations(MongoTemplate mongoTemplate,
+									   FlightPlanRepository repository,
+									   PerformanceMetrics metrics) {
+		clearMongoCollection(mongoTemplate);
+		loadFlightPlansDirect(mongoTemplate, metrics);
+		simulateDirectMongoOperations(repository, metrics);
 	}
 
 	private void clearCache(Ignite ignite, String cacheName) {
 		IgniteCache<?, ?> cache = ignite.cache(cacheName);
 		if (cache != null) {
 			cache.clear();
-			System.out.println("🧹 Cleared cache: " + cacheName);
-		} else {
-			System.out.println("⚠️ Cache " + cacheName + " does not exist, skipping clear.");
+			System.out.println("🧹 Cleared Ignite cache: " + cacheName);
 		}
 	}
 
@@ -70,157 +72,98 @@ public class IgniteDemoApplication {
 		System.out.println("🧹 Cleared MongoDB collection");
 	}
 
-	private void loadFlightPlans(Ignite ignite) {
-		try (IgniteDataStreamer<String, FlightPlan> ids = ignite.dataStreamer("flightPlans")) {
-			ids.allowOverwrite(true);
-			ids.autoFlushFrequency(5000);
+	private void loadSampleFlights(IgniteDataStreamer<String, FlightPlan> streamer, long baseTime) {
+		// Sample flight AA123
+		FlightPlan aa123 = createFlightPlan(
+				"AA123",
+				"American Airlines",
+				"JFK",
+				"LAX",
+				baseTime,
+				3 // hours offset
+		);
+		streamer.addData(aa123.getFlightNumber(), aa123);
+
+		// Sample flight DL456
+		FlightPlan dl456 = createFlightPlan(
+				"DL456",
+				"Delta Airlines",
+				"ATL",
+				"SFO",
+				baseTime + 30 * 60 * 1000L, // 30 minutes offset
+				4 // hours offset
+		);
+		streamer.addData(dl456.getFlightNumber(), dl456);
+
+		System.out.println("✈️ Added sample flights: AA123, DL456");
+	}
+
+	private void loadFlightPlans(Ignite ignite, PerformanceMetrics metrics) {
+		long startTime = System.currentTimeMillis();
+
+		try (IgniteDataStreamer<String, FlightPlan> streamer = ignite.dataStreamer("flightPlans")) {
+			streamer.allowOverwrite(true);
+			streamer.autoFlushFrequency(5000);
 
 			long baseTime = System.currentTimeMillis();
 
-			// Sample Flights
-			FlightPlan aa123 = new FlightPlan(
-					"AA123", "American Airlines", "JFK", "LAX",
-					new Date(baseTime), new Date(baseTime + 3 * 60 * 60 * 1000)
-			);
-			ids.addData(aa123.getFlightNumber(), aa123);
-
-			FlightPlan dl456 = new FlightPlan(
-					"DL456", "Delta Airlines", "ATL", "SFO",
-					new Date(baseTime + 30 * 60 * 1000), new Date(baseTime + 4 * 60 * 60 * 1000)
-			);
-			ids.addData(dl456.getFlightNumber(), dl456);
+			// Load sample flights
+			loadSampleFlights(streamer, baseTime);
 
 			// Generate 100,000 flights
 			for (int i = 0; i < 100_000; i++) {
-				String flightNumber = "FL" + i;
-				long departureOffset = i * 15 * 60 * 1000L;
-				FlightPlan fp = new FlightPlan(
-						flightNumber,
-						"Airline " + (i % 5),
-						"APT" + (i % 10),
-						"APT" + ((i % 10) + 1),
-						new Date(baseTime + departureOffset),
-						new Date(baseTime + departureOffset + 2 * 60 * 60 * 1000)
-				);
-
-				ids.addData(flightNumber, fp);
+				FlightPlan fp = createFlightPlan(i, baseTime);
+				streamer.addData(fp.getFlightNumber(), fp);
 
 				if ((i + 1) % 1000 == 0) {
-					System.out.println("🔄 Generated and added " + 1000 + " flights (Total: " + (i + 1) + ")");
+					System.out.println("🔄 Ignite: Added 1000 flights (Total: " + (i + 1) + ")");
 				}
 			}
-			ids.flush();
+			streamer.flush();
 		}
-		System.out.println("✅ Successfully loaded flight plans into Ignite");
+
+		metrics.setIgniteLoadTime(System.currentTimeMillis() - startTime);
+		System.out.println("✅ Ignite data load completed");
 	}
 
-	private void simulateFlightOperations(IgniteCache<String, FlightPlan> cache) {
-		System.out.println("✈️ Starting flight operations simulation...");
+	private void simulateFlightOperations(IgniteCache<String, FlightPlan> cache, PerformanceMetrics metrics) {
+		System.out.println("✈️ Starting Ignite operations...");
 
 		// Bulk reads
-		for (int i = 0; i < 50_000; i++) {
-			String flightNumber = "FL" + ThreadLocalRandom.current().nextInt(100_000);
-			FlightPlan flight = cache.get(flightNumber);
-			if (i % 10_000 == 0 && flight != null) {
-				System.out.println("🔍 Retrieved flight: " + flight.getFlightNumber());
-			}
-		}
+		long readStart = System.currentTimeMillis();
+		performReadOperations(cache);
+		metrics.setIgniteReadTime(System.currentTimeMillis() - readStart);
 
 		// Bulk updates
-		for (int i = 0; i < 10_000; i++) {
-			String flightNumber = "FL" + i;
-			FlightPlan updated = new FlightPlan(
-					flightNumber, "Updated Airline", "UPD_ORG", "UPD_DEST",
-					new Date(), new Date(System.currentTimeMillis() + 3 * 60 * 60 * 1000)
-			);
-
-			cache.put(flightNumber, updated);
-
-			if ((i + 1) % 1000 == 0) {
-				System.out.println("🔄 Updated " + 1000 + " flights (Total: " + (i + 1) + ")");
-			}
-		}
+		long updateStart = System.currentTimeMillis();
+		performUpdateOperations(cache);
+		metrics.setIgniteUpdateTime(System.currentTimeMillis() - updateStart);
 
 		// Bulk deletions
-		for (int i = 0; i < 5_000; i++) {
-			String flightNumber = "FL" + (100_000 - i - 1);
-			cache.remove(flightNumber);
+		long deleteStart = System.currentTimeMillis();
+		performDeleteOperations(cache);
+		metrics.setIgniteDeleteTime(System.currentTimeMillis() - deleteStart);
 
-			if ((i + 1) % 1000 == 0) {
-				System.out.println("🗑️ Deleted " + 1000 + " flights (Total: " + (i + 1) + ")");
-			}
-		}
-
-		System.out.println("✅ Flight operations for Ignite Cache simulation complete");
+		System.out.println("✅ Ignite operations completed");
 	}
 
-	private void logMetrics(Ignite ignite, String filename,
-							IgniteCache<String, FlightPlan> cache,
-							DirectMetrics directMetrics) {
-		try {
-			Thread.sleep(2000); // Allow final metric updates
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-
-		try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
-			// Ignite Metrics
-			CacheMetrics igniteMetrics = cache.metrics();
-			writer.println("\n===== Ignite Metrics =====");
-			writer.println("Timestamp: " + System.currentTimeMillis());
-			writer.println("Entries: " + cache.size());
-			writer.println("Reads: " + igniteMetrics.getCacheGets());
-			writer.println("Writes: " + igniteMetrics.getCachePuts());
-			writer.println("Hit Ratio: " + String.format("%.2f%%", igniteMetrics.getCacheHitPercentage()));
-
-			// Direct MongoDB Metrics
-			writer.println("\n===== Direct MongoDB Metrics =====");
-			writer.println("Data Load Time: " + directMetrics.getLoadTime() + " ms");
-			writer.println("Read Time (50k ops): " + directMetrics.getReadTime() + " ms");
-			writer.println("Update Time (10k ops): " + directMetrics.getUpdateTime() + " ms");
-			writer.println("Delete Time (5k ops): " + directMetrics.getDeleteTime() + " ms");
-
-		} catch (IOException e) {
-			System.err.println("Error writing metrics: " + e.getMessage());
-		}
-	}
-
-	private void loadFlightPlansDirect(MongoTemplate mongoTemplate, DirectMetrics metrics) {
+	private void loadFlightPlansDirect(MongoTemplate mongoTemplate, PerformanceMetrics metrics) {
 		long startTime = System.currentTimeMillis();
 		List<FlightPlan> batch = new ArrayList<>();
-
 		long baseTime = System.currentTimeMillis();
 
-		// Sample flights
-		FlightPlan aa123 = new FlightPlan(
-				"AA123", "American Airlines", "JFK", "LAX",
-				new Date(baseTime), new Date(baseTime + 3 * 60 * 60 * 1000)
-		);
-		batch.add(aa123);
-
-		FlightPlan dl456 = new FlightPlan(
-				"DL456", "Delta Airlines", "ATL", "SFO",
-				new Date(baseTime + 30 * 60 * 1000), new Date(baseTime + 4 * 60 * 60 * 1000)
-		);
-		batch.add(dl456);
+		// Load sample flights
+		batch.add(createFlightPlan("AA123", "American Airlines", "JFK", "LAX", baseTime, 3));
+		batch.add(createFlightPlan("DL456", "Delta Airlines", "ATL", "SFO", baseTime + 1800000L, 4));
 
 		// Generate 100,000 flights
 		for (int i = 0; i < 100_000; i++) {
-			String flightNumber = "FL" + i;
-			long departureOffset = i * 15 * 60 * 1000L;
-			FlightPlan fp = new FlightPlan(
-					flightNumber,
-					"Airline " + (i % 5),
-					"APT" + (i % 10),
-					"APT" + ((i % 10) + 1),
-					new Date(baseTime + departureOffset),
-					new Date(baseTime + departureOffset + 2 * 60 * 60 * 1000)
-			);
-			batch.add(fp);
+			batch.add(createFlightPlan(i, baseTime));
 
 			if (batch.size() % 1000 == 0) {
 				mongoTemplate.insert(batch, FlightPlan.class);
 				batch.clear();
+				System.out.println("🔄 MongoDB: Added 1000 flights (Total: " + (i + 1) + ")");
 			}
 		}
 
@@ -228,68 +171,146 @@ public class IgniteDemoApplication {
 			mongoTemplate.insert(batch, FlightPlan.class);
 		}
 
-		metrics.setLoadTime(System.currentTimeMillis() - startTime);
-		System.out.println("✅ Direct MongoDB load complete");
+		metrics.setMongoLoadTime(System.currentTimeMillis() - startTime);
+		System.out.println("✅ MongoDB data load completed");
 	}
 
-	private void simulateDirectMongoOperations(FlightPlanRepository repository, DirectMetrics metrics) {
-		System.out.println("✈️ Starting direct MongoDB operations...");
+	private void simulateDirectMongoOperations(FlightPlanRepository repository, PerformanceMetrics metrics) {
+		System.out.println("✈️ Starting MongoDB operations...");
 
-		// Bulk Reads
+		// Bulk reads
 		long readStart = System.currentTimeMillis();
+		performMongoReads(repository);
+		metrics.setMongoReadTime(System.currentTimeMillis() - readStart);
+
+		// Bulk updates
+		long updateStart = System.currentTimeMillis();
+		performMongoUpdates(repository);
+		metrics.setMongoUpdateTime(System.currentTimeMillis() - updateStart);
+
+		// Bulk deletions
+		long deleteStart = System.currentTimeMillis();
+		performMongoDeletions(repository);
+		metrics.setMongoDeleteTime(System.currentTimeMillis() - deleteStart);
+
+		System.out.println("✅ MongoDB operations completed");
+	}
+
+	// Helper methods
+	private FlightPlan createFlightPlan(int index, long baseTime) {
+		String flightNumber = "FL" + index;
+		long departureOffset = index * 900000L; // 15 minutes in milliseconds
+		return new FlightPlan(
+				flightNumber,
+				"Airline " + (index % 5),
+				"APT" + (index % 10),
+				"APT" + ((index % 10) + 1),
+				new Date(baseTime + departureOffset),
+				new Date(baseTime + departureOffset + 7200000L) // +2 hours
+		);
+	}
+
+	private FlightPlan createFlightPlan(String number, String airline,
+										String origin, String destination,
+										long baseTime, int hoursOffset) {
+		return new FlightPlan(
+				number,
+				airline,
+				origin,
+				destination,
+				new Date(baseTime),
+				new Date(baseTime + hoursOffset * 3600000L)
+		);
+	}
+
+	private void performReadOperations(IgniteCache<String, FlightPlan> cache) {
 		for (int i = 0; i < 50_000; i++) {
 			String flightNumber = "FL" + ThreadLocalRandom.current().nextInt(100_000);
-			FlightPlan flight = repository.findById(flightNumber).orElse(null);
-
-			// Log every 10,000th read
+			FlightPlan flight = cache.get(flightNumber);
 			if (i % 10_000 == 0 && flight != null) {
-				System.out.println("🔍 Retrieved flight: " + flight.getFlightNumber());
+				System.out.println("🔍 Ignite Read: " + flight.getFlightNumber());
 			}
 		}
-		metrics.setReadTime(System.currentTimeMillis() - readStart);
+	}
 
-		// Bulk Updates
-		long updateStart = System.currentTimeMillis();
+	private void performUpdateOperations(IgniteCache<String, FlightPlan> cache) {
 		for (int i = 0; i < 10_000; i++) {
 			String flightNumber = "FL" + i;
 			FlightPlan updated = new FlightPlan(
 					flightNumber, "Updated Airline", "UPD_ORG", "UPD_DEST",
-					new Date(), new Date(System.currentTimeMillis() + 3 * 60 * 60 * 1000)
+					new Date(), new Date(System.currentTimeMillis() + 10800000L)
 			);
-			repository.save(updated);
-
-			// Log every 1,000 updates
+			cache.put(flightNumber, updated);
 			if ((i + 1) % 1000 == 0) {
-				System.out.println("🔄 Updated 1000 flights (Total: " + (i + 1) + ")");
+				System.out.println("🔄 Ignite Update: " + (i + 1));
 			}
 		}
-		metrics.setUpdateTime(System.currentTimeMillis() - updateStart);
-
-		// Bulk Deletions
-		long deleteStart = System.currentTimeMillis();
-		for (int i = 0; i < 5_000; i++) {
-			String flightNumber = "FL" + (100_000 - i - 1);
-			repository.deleteById(flightNumber);
-
-			// Log every 1,000 deletions
-			if ((i + 1) % 1000 == 0) {
-				System.out.println("🗑️ Deleted 1000 flights (Total: " + (i + 1) + ")");
-			}
-		}
-		metrics.setDeleteTime(System.currentTimeMillis() - deleteStart);
-		System.out.println("✅ Flight operations for MongoDB simulation complete");
 	}
 
-	private void logDirectMetrics(DirectMetrics metrics, String filename) {
+	private void performDeleteOperations(IgniteCache<String, FlightPlan> cache) {
+		for (int i = 0; i < 5_000; i++) {
+			String flightNumber = "FL" + (99_999 - i);
+			cache.remove(flightNumber);
+			if ((i + 1) % 1000 == 0) {
+				System.out.println("🗑️ Ignite Delete: " + (i + 1));
+			}
+		}
+	}
+
+	private void performMongoReads(FlightPlanRepository repository) {
+		for (int i = 0; i < 50_000; i++) {
+			String flightNumber = "FL" + ThreadLocalRandom.current().nextInt(100_000);
+			FlightPlan flight = repository.findById(flightNumber).orElse(null);
+			if (i % 10_000 == 0 && flight != null) {
+				System.out.println("🔍 MongoDB Read: " + flight.getFlightNumber());
+			}
+		}
+	}
+
+	private void performMongoUpdates(FlightPlanRepository repository) {
+		for (int i = 0; i < 10_000; i++) {
+			String flightNumber = "FL" + i;
+			FlightPlan updated = new FlightPlan(
+					flightNumber, "Updated Airline", "UPD_ORG", "UPD_DEST",
+					new Date(), new Date(System.currentTimeMillis() + 10800000L)
+			);
+			repository.save(updated);
+			if ((i + 1) % 1000 == 0) {
+				System.out.println("🔄 MongoDB Update: " + (i + 1));
+			}
+		}
+	}
+
+	private void performMongoDeletions(FlightPlanRepository repository) {
+		for (int i = 0; i < 5_000; i++) {
+			String flightNumber = "FL" + (99_999 - i);
+			repository.deleteById(flightNumber);
+			if ((i + 1) % 1000 == 0) {
+				System.out.println("🗑️ MongoDB Delete: " + (i + 1));
+			}
+		}
+	}
+
+	private void logMetrics(PerformanceMetrics metrics, String filename) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(filename, true))) {
-			writer.println("\n===== Direct MongoDB Metrics =====");
-			writer.println("Data Load Time: " + metrics.getLoadTime() + " ms");
-			writer.println("Read Time (50k ops): " + metrics.getReadTime() + " ms");
-			writer.println("Update Time (10k ops): " + metrics.getUpdateTime() + " ms");
-			writer.println("Delete Time (5k ops): " + metrics.getDeleteTime() + " ms");
-			writer.println("===================================");
+			writer.println("\n===== Performance Report =====");
+			writer.println("Generated at: " + new Date());
+
+			writer.println("\n=== Ignite Performance ===");
+			writer.println("Data Load Time: " + metrics.getIgniteLoadTime() + " ms");
+			writer.println("Read Time (50k ops): " + metrics.getIgniteReadTime() + " ms");
+			writer.println("Update Time (10k ops): " + metrics.getIgniteUpdateTime() + " ms");
+			writer.println("Delete Time (5k ops): " + metrics.getIgniteDeleteTime() + " ms");
+
+			writer.println("\n=== MongoDB Performance ===");
+			writer.println("Data Load Time: " + metrics.getMongoLoadTime() + " ms");
+			writer.println("Read Time (50k ops): " + metrics.getMongoReadTime() + " ms");
+			writer.println("Update Time (10k ops): " + metrics.getMongoUpdateTime() + " ms");
+			writer.println("Delete Time (5k ops): " + metrics.getMongoDeleteTime() + " ms");
+
+			writer.println("\n" + "-".repeat(50));
 		} catch (IOException e) {
-			System.err.println("Error writing direct metrics: " + e.getMessage());
+			System.err.println("Error writing metrics: " + e.getMessage());
 		}
 	}
 }
