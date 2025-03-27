@@ -80,3 +80,52 @@ Update Time (10k ops): 3517 ms
 Delete Time (5k ops): 1509 ms
 
 --------------------------------------------------
+
+===== Performance Report =====
+Generated at: Fri Mar 28 01:55:14 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 674 ms
+Read Time (50k ops): 537 ms
+Update Time (10k ops): 264 ms
+Delete Time (5k ops): 110 ms
+
+=== MongoDB Performance ===
+Data Load Time: 2926 ms
+Read Time (50k ops): 17571 ms
+Update Time (10k ops): 3665 ms
+Delete Time (5k ops): 1501 ms
+
+--------------------------------------------------
+
+===== Performance Comparison =====
+Timestamp: 1743098783688
+
+--- Ignite Metrics ---
+Data Load: 671 ms
+50k Reads: 537 ms
+10k Updates: 279 ms
+5k Deletes: 108 ms
+
+--- MongoDB Metrics ---
+Data Load: 2941 ms
+50k Reads: 16004 ms
+10k Updates: 3363 ms
+5k Deletes: 1316 ms
+==================================================
+===== Performance Report =====
+Generated at: Fri Mar 28 02:09:53 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 720 ms
+Read Time (50k ops): 522 ms
+Update Time (10k ops): 282 ms
+Delete Time (5k ops): 114 ms
+
+=== MongoDB Performance ===
+Data Load Time: 2832 ms
+Read Time (50k ops): 15555 ms
+Update Time (10k ops): 3226 ms
+Delete Time (5k ops): 1414 ms
+
+==================================================
