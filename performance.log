@@ -161,3 +161,19 @@ Update Time (10k ops): 3909 ms
 Delete Time (5k ops): 1582 ms
 
 ==================================================
+===== Performance Report =====
+Generated at: Sat Mar 29 02:51:52 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 7514 ms
+Read Time (50k ops): 602 ms
+Update Time (10k ops): 4257 ms
+Delete Time (5k ops): 1709 ms
+
+=== MongoDB Performance ===
+Data Load Time: 2726 ms
+Read Time (50k ops): 15075 ms
+Update Time (10k ops): 3481 ms
+Delete Time (5k ops): 1275 ms
+
+==================================================
