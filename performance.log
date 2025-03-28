@@ -129,3 +129,35 @@ Update Time (10k ops): 3226 ms
 Delete Time (5k ops): 1414 ms
 
 ==================================================
+===== Performance Report =====
+Generated at: Fri Mar 28 21:25:47 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 879 ms
+Read Time (50k ops): 555 ms
+Update Time (10k ops): 265 ms
+Delete Time (5k ops): 119 ms
+
+=== MongoDB Performance ===
+Data Load Time: 2979 ms
+Read Time (50k ops): 17477 ms
+Update Time (10k ops): 3812 ms
+Delete Time (5k ops): 1516 ms
+
+==================================================
+===== Performance Report =====
+Generated at: Fri Mar 28 21:50:23 SGT 2025
+
+=== Ignite Performance ===
+Data Load Time: 918 ms
+Read Time (50k ops): 606 ms
+Update Time (10k ops): 298 ms
+Delete Time (5k ops): 112 ms
+
+=== MongoDB Performance ===
+Data Load Time: 2925 ms
+Read Time (50k ops): 18348 ms
+Update Time (10k ops): 3909 ms
+Delete Time (5k ops): 1582 ms
+
+==================================================
